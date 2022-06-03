@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CalculatorServiceClient interface {
 	PerformAddition(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error)
+	PerformSubtraction(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error)
 }
 
 type calculatorServiceClient struct {
@@ -42,11 +43,21 @@ func (c *calculatorServiceClient) PerformAddition(ctx context.Context, in *Calcu
 	return out, nil
 }
 
+func (c *calculatorServiceClient) PerformSubtraction(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error) {
+	out := new(CalculateResponse)
+	err := c.cc.Invoke(ctx, "/proto.CalculatorService/PerformSubtraction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CalculatorServiceServer is the server API for CalculatorService service.
 // All implementations must embed UnimplementedCalculatorServiceServer
 // for forward compatibility
 type CalculatorServiceServer interface {
 	PerformAddition(context.Context, *CalculateRequest) (*CalculateResponse, error)
+	PerformSubtraction(context.Context, *CalculateRequest) (*CalculateResponse, error)
 	mustEmbedUnimplementedCalculatorServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedCalculatorServiceServer struct {
 
 func (UnimplementedCalculatorServiceServer) PerformAddition(context.Context, *CalculateRequest) (*CalculateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PerformAddition not implemented")
+}
+func (UnimplementedCalculatorServiceServer) PerformSubtraction(context.Context, *CalculateRequest) (*CalculateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PerformSubtraction not implemented")
 }
 func (UnimplementedCalculatorServiceServer) mustEmbedUnimplementedCalculatorServiceServer() {}
 
@@ -88,6 +102,24 @@ func _CalculatorService_PerformAddition_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CalculatorService_PerformSubtraction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CalculateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalculatorServiceServer).PerformSubtraction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.CalculatorService/PerformSubtraction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalculatorServiceServer).PerformSubtraction(ctx, req.(*CalculateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CalculatorService_ServiceDesc is the grpc.ServiceDesc for CalculatorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var CalculatorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PerformAddition",
 			Handler:    _CalculatorService_PerformAddition_Handler,
+		},
+		{
+			MethodName: "PerformSubtraction",
+			Handler:    _CalculatorService_PerformSubtraction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

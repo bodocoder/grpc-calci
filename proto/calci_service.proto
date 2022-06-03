@@ -15,4 +15,5 @@ message CalculateResponse {
 
 service CalculatorService {
     rpc PerformAddition(CalculateRequest) returns (CalculateResponse) {};
+    rpc PerformSubtraction(CalculateRequest) returns (CalculateResponse) {};
 }
