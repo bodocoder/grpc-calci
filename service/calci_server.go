@@ -17,3 +17,7 @@ func (server *CalciServer) PerformAddition(ctx context.Context, req *pb.Calculat
 func (server *CalciServer) PerformSubtraction(ctx context.Context, req *pb.CalculateRequest) (*pb.CalculateResponse, error) {
 	return &pb.CalculateResponse{Res: req.X - req.Y}, nil
 }
+
+func (server *CalciServer) PerformMultiplication(ctx context.Context, req *pb.CalculateRequest) (*pb.CalculateResponse, error) {
+	return &pb.CalculateResponse{Res: req.X * req.Y}, nil
+}
