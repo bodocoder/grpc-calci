@@ -17,4 +17,5 @@ service CalculatorService {
     rpc PerformAddition(CalculateRequest) returns (CalculateResponse) {};
     rpc PerformSubtraction(CalculateRequest) returns (CalculateResponse) {};
     rpc PerformMultiplication(CalculateRequest) returns (CalculateResponse) {};
+    rpc PerformDivision(CalculateRequest) returns (CalculateResponse) {};
 }

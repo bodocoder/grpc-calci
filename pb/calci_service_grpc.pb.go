@@ -25,6 +25,7 @@ type CalculatorServiceClient interface {
 	PerformAddition(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error)
 	PerformSubtraction(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error)
 	PerformMultiplication(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error)
+	PerformDivision(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error)
 }
 
 type calculatorServiceClient struct {
@@ -62,6 +63,15 @@ func (c *calculatorServiceClient) PerformMultiplication(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *calculatorServiceClient) PerformDivision(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*CalculateResponse, error) {
+	out := new(CalculateResponse)
+	err := c.cc.Invoke(ctx, "/proto.CalculatorService/PerformDivision", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CalculatorServiceServer is the server API for CalculatorService service.
 // All implementations must embed UnimplementedCalculatorServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type CalculatorServiceServer interface {
 	PerformAddition(context.Context, *CalculateRequest) (*CalculateResponse, error)
 	PerformSubtraction(context.Context, *CalculateRequest) (*CalculateResponse, error)
 	PerformMultiplication(context.Context, *CalculateRequest) (*CalculateResponse, error)
+	PerformDivision(context.Context, *CalculateRequest) (*CalculateResponse, error)
 	mustEmbedUnimplementedCalculatorServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedCalculatorServiceServer) PerformSubtraction(context.Context, 
 }
 func (UnimplementedCalculatorServiceServer) PerformMultiplication(context.Context, *CalculateRequest) (*CalculateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PerformMultiplication not implemented")
+}
+func (UnimplementedCalculatorServiceServer) PerformDivision(context.Context, *CalculateRequest) (*CalculateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PerformDivision not implemented")
 }
 func (UnimplementedCalculatorServiceServer) mustEmbedUnimplementedCalculatorServiceServer() {}
 
@@ -152,6 +166,24 @@ func _CalculatorService_PerformMultiplication_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CalculatorService_PerformDivision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CalculateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalculatorServiceServer).PerformDivision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.CalculatorService/PerformDivision",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalculatorServiceServer).PerformDivision(ctx, req.(*CalculateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CalculatorService_ServiceDesc is the grpc.ServiceDesc for CalculatorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var CalculatorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PerformMultiplication",
 			Handler:    _CalculatorService_PerformMultiplication_Handler,
+		},
+		{
+			MethodName: "PerformDivision",
+			Handler:    _CalculatorService_PerformDivision_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
