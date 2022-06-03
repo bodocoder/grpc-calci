@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/bodocoder/grpc-calci/pb";
+
+message CalculateRequest {
+    double x = 1;
+    double y = 2;
+}
+
+message CalculateResponse {
+    double res = 1;
+}
+
+service CalculatorService {
+    rpc PerformAddition(CalculateRequest) returns (CalculateResponse) {};
+}
